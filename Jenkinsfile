@@ -37,7 +37,6 @@ pipeline {
             steps {
                 container('kaniko') {
                     sh '''
-                        cat /kaniko/.docker/config.json
                         /kaniko/executor --context `pwd` --destination rberwald/inboud-agent:0.1.0
                     '''
                 }

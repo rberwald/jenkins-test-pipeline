@@ -11,7 +11,7 @@ pipeline {
                 command:
                 - sleep
                 args:
-                - infinite
+                - 9999999
               - name: kaniko
                 image: gcr.io/kaniko-project/executor:debug
                 command:

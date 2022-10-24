@@ -1,11 +1,11 @@
 pipeline {
-  agent { dockerfile true }
+  agent {
+    docker { image 'jenkins/jenkins:lts-jdk11' }
+  }
   stages {
     stage('Test') {
       steps {
-        sh '''
-          git --version
-        '''
+        sh 'jenkins-plugin-cli --list'
       }
     }
   }

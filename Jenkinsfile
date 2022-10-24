@@ -17,8 +17,18 @@ pipeline {
                 command:
                 - sleep
                 args:
-                - 9999999
+                - 10000000
+                volumeMounts:
+                  - name: kaniko-secret
+                    mountPath: /kaniko/.docker
               restartPolicy: Never
+              volumes:
+                - name: kaniko-secret
+                  secret:
+                    secretName: saas-credentials
+                    items:
+                      - key: .dockerconfigjson
+                        path: config.json
         '''
         }
     }
@@ -37,6 +47,7 @@ pipeline {
             steps {
                 container('kaniko') {
                     sh '''
+                        cat /kaniko/.docker/config.json
                         /kaniko/executor --context `pwd` --destination rberwald/inboud-agent:0.1.0
                     '''
                 }

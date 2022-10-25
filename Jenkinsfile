@@ -6,14 +6,6 @@ pipeline {
             kind: Pod
             spec:
               containers:
-              - name: jnlp
-                resources:
-                  requests:
-                    cpu: 512m
-                    memory: 4G
-                  limits:
-                    cpu: 512m
-                    memory: 4G
               - name: kaniko
                 image: gcr.io/kaniko-project/executor:debug
                 command:
@@ -41,13 +33,14 @@ pipeline {
         '''
         }
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
+
         stage('Build') {
             steps {
               sh '''
@@ -55,13 +48,12 @@ pipeline {
               '''
             }
         }
+
         stage('Package') {
             steps {
                 container('kaniko') {
                     sh '''
-                    ls -lRa /kaniko
-                    cat /kaniko/.docker/config.json
-                    /kaniko/executor --cache=true --cache-copy-layers=true --cache-ttl=96h --context `pwd` --destination index.docker.io/rberwald/jenkins:0.1.0
+                      /kaniko/executor --context `pwd` --destination index.docker.io/rberwald/jenkins:0.1.0
                     '''
                 }
             }

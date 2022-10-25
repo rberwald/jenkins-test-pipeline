@@ -1,49 +1,14 @@
 pipeline {
-    agent {
-        kubernetes {
-          yaml '''
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: maven
-                image: maven:3.8.1-jdk-8
-                command:
-                - sleep
-                args:
-                - 9999999
-              - name: kaniko
-                image: gcr.io/kaniko-project/executor:debug
-                command:
-                - sleep
-                args:
-                - 10000000
-                volumeMounts:
-                  - name: kaniko-secret
-                    mountPath: /kaniko/.docker
-              restartPolicy: Never
-              volumes:
-                - name: kaniko-secret
-                  secret:
-                    secretName: saas-credentials
-                    items:
-                      - key: .dockerconfigjson
-                        path: config.json
-        '''
-        }
-    }
-
     stages {
-        stage ('Clone') {
-            steps {
-                container('maven')  {
-                    git url: 'https://github.com/rberwald/jenkins-test-pipeline.git', branch: 'main'
-                }
-            }
-        }
+#        stage ('Clone') {
+#            steps {
+#                container('jnlp')  {
+#                    git url: 'https://github.com/rberwald/jenkins-test-pipeline.git', branch: 'main'
+#                }
+#            }
+#        }
 
-
-        stage ('Exec Kaniko') {
+        stage ('Build image') {
             steps {
                 container('kaniko') {
                     sh '''

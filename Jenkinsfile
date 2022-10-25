@@ -7,19 +7,15 @@ volumes: [
   secretVolume(mountPath: '/kaniko/.docker/', secretName: 'saas-credentials')
 ]) {
  node(label) {
-   stages {
-      stage('Stage 0: Checkout the code') {
-          steps {
-            checkout scm
-          }
+    stage('Stage 0: Checkout the code') {
+        checkout scm
+    }
+    stage('Stage 1: Build with Kaniko') {  
+      container('kaniko') {
+        sh '''
+          /kaniko/executor --context `pwd` --destination docker.io/rberwald/jenkins:lts-jdk11
+        '''
       }
-      stage('Stage 1: Build with Kaniko') {  
-         container('kaniko') {
-           sh '''
-               /kaniko/executor --context `pwd` --destination docker.io/rberwald/jenkins:lts-jdk11
-           '''
-         }
-       }
-   }
+    }
   }
 }

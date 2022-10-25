@@ -1,4 +1,8 @@
 pipeline {
+    agent {
+        kubernetes {
+         }
+    }
     stages {
         stage ('Build image') {
             steps {

@@ -1,23 +1,53 @@
-def label = "podname.$BUILD_NUMBER-pipeline"
- 
-podTemplate(label: label, containers: [
- containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true)
-],
-volumes: [
-  secretVolume(mountPath: '/kaniko/.docker/', secretName: 'saas-credentials')
-]) {
- node(label) {
-    stage('Stage 0: Checkout the code') {
-        checkout scm
-    }
-    stage('Stage 1: Build with Kaniko') {  
-      container('kaniko') {
-        sh '''
-          ls -l /kaniko/.docker
-          cat /kaniko/.docker/config.json || true
-          /kaniko/executor --context `pwd` --destination docker.io/rberwald/jenkins:lts-jdk11
+pipeline {
+    agent {
+        kubernetes {
+          yaml '''
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: kaniko
+                image: gcr.io/kaniko-project/executor:debug
+                command:
+                - sleep
+                args:
+                - 10000000
+                volumeMounts:
+                  - name: kaniko-secret
+                    mountPath: /kaniko/.docker
+              restartPolicy: Never
+              volumes:
+                - name: kaniko-secret
+                  secret:
+                    secretName: saas-credentials
+                    items:
+                      - key: .dockerconfigjson
+                        path: config.json
         '''
-      }
+        }
     }
-  }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+              sh '''
+                  echo 'Build my application around here'
+              '''
+            }
+        }
+        stage('Package') {
+            steps {
+                container('kaniko') {
+                    sh '''
+                    /kaniko/executor --context `pwd` --destination index.docker.io/rberwald/jenkins:0.1.0
+                    '''
+                }
+            }
+        }
+    }
 }

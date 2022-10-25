@@ -11,6 +11,9 @@ pipeline {
                   requests:
                     cpu: 512m
                     memory: 4G
+                  limits:
+                    cpu: 512m
+                    memory: 4G
               - name: kaniko
                 image: gcr.io/kaniko-project/executor:debug
                 command:
@@ -19,6 +22,9 @@ pipeline {
                 - 10000000
                 resources:
                   requests:
+                    cpu: 1500m
+                    memory: 12G
+                  limits:
                     cpu: 1500m
                     memory: 12G
                 volumeMounts:

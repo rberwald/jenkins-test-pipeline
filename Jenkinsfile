@@ -13,6 +13,8 @@ volumes: [
     stage('Stage 1: Build with Kaniko') {  
       container('kaniko') {
         sh '''
+          ls -l /kaniko/.docker
+          cat /kaniko/.docker/config.json || true
           /kaniko/executor --context `pwd` --destination docker.io/rberwald/jenkins:lts-jdk11
         '''
       }

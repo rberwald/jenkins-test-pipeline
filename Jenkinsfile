@@ -60,7 +60,7 @@ pipeline {
                 container('kaniko') {
                     sh '''
                     ls -lRa /kaniko
-                    cat /kaniko/.docker/config
+                    cat /kaniko/.docker/config.json
                     /kaniko/executor --cache=true --cache-copy-layers=true --cache-ttl=96h --context `pwd` --destination index.docker.io/rberwald/jenkins:0.1.0
                     '''
                 }

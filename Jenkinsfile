@@ -47,8 +47,7 @@ pipeline {
             steps {
                 container('kaniko') {
                     sh '''
-                        cat /kaniko/.docker/config.json
-                        /kaniko/executor --context `pwd` --destination rberwald/inbound-agent:0.1.0 --verbosity debug
+                        /kaniko/executor --context `pwd` --destination rberwald/jenkins:lts-jdk11
                     '''
                 }
             }

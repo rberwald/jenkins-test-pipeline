@@ -53,7 +53,7 @@ pipeline {
             steps {
                 container('kaniko') {
                     sh '''
-                      /kaniko/executor --context `pwd` --destination index.docker.io/rberwald/jenkins:0.1.0
+                      /kaniko/executor --context `pwd` --destination index.docker.io/rberwald/jenkins:lts-jdk11
                     '''
                 }
             }

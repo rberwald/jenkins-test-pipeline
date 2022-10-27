@@ -1,36 +1,8 @@
 pipeline {
     agent {
         kubernetes {
-          yaml '''
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: kaniko
-                image: gcr.io/kaniko-project/executor:debug
-                command:
-                - sleep
-                args:
-                - 10000000
-                resources:
-                  requests:
-                    cpu: 1500m
-                    memory: 12G
-                  limits:
-                    cpu: 1500m
-                    memory: 12G
-                volumeMounts:
-                  - name: dockerhubcreds
-                    mountPath: /kaniko/.docker
-              restartPolicy: Never
-              volumes:
-                - name: dockerhubcreds
-                  secret:
-                    secretName: dockerhubcreds
-                    items:
-                      - key: .dockerconfigjson
-                        path: config.json
-        '''
+          defaultContainer 'jnlp'
+          yaml libraryResource('podTemplates/kaniko.yaml')
         }
     }
 
